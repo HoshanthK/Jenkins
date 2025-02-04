@@ -3,7 +3,21 @@ pipeline {
     stages {
         stage('Verify Docker') {
             steps {
-                sh 'docker --version'
+                script {
+                    // Check if Docker daemon is running
+                    def dockerStatus = sh(script: 'sudo systemctl is-active docker', returnStdout: true).trim()
+                    
+                    // If Docker is not active, start the service
+                    if (dockerStatus != 'active') {
+                        echo "Docker daemon is not running. Starting Docker..."
+                        sh 'sudo systemctl start docker'
+                    } else {
+                        echo "Docker daemon is already running."
+                    }
+
+                    // Ensure Docker is accessible
+                    sh 'docker --version'
+                }
             }
         }
         stage('Build') {
