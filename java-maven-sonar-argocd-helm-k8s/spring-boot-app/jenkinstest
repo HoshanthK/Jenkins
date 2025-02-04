@@ -1,47 +1,11 @@
 pipeline {
-    agent {
-        kubernetes { // Or your preferred agent definition
-            label 'your-agent-label' // If using Kubernetes
-            containers {
-                container {
-                    image 'jenkins/jenkins:latest' // Or your Jenkins agent image
-                    tty true // Important for DinD to work properly
-                    privileged true // Required for DinD
-                    ports {
-                        port {
-                            containerPort 8080
-                        }
-                    }
-                    // Define the dind container as a sidecar
-                    sidecarContainers {
-                        container {
-                            image 'docker:dind'
-                            privileged true // Required for DinD
-                            // Expose the Docker socket of the Dind container
-                            ports {
-                                port {
-                                    containerPort 2375
-                                }
-                            }
-                            // Important: Set the DOCKER_HOST environment variable
-                            env {
-                                DOCKER_HOST "tcp://localhost:2375"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    agent any
     stages {
-        stage('Verify Docker') {
-            steps {
-                sh 'docker version' // Should now connect to the inner daemon
-            }
-        }
         stage('Build') {
             steps {
-                sh 'docker inspect -f . abhishekf5/maven-abhishek-docker-agent:v1'
+                script {
+                    sh 'docker inspect -f . abhishekf5/maven-abhishek-docker-agent:v1'
+                }
             }
         }
     }
