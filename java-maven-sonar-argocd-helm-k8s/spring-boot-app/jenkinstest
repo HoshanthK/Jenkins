@@ -1,0 +1,15 @@
+pipeline {
+    agent any
+    stages {
+        stage('Verify Docker') {
+            steps {
+                sh 'docker --version'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker inspect -f . abhishekf5/maven-abhishek-docker-agent:v1'
+            }
+        }
+    }
+}
