@@ -1,12 +1,42 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes { // Or your preferred agent definition
+            label 'your-agent-label' // If using Kubernetes
+            containers {
+                container {
+                    image 'jenkins/jenkins:latest' // Or your Jenkins agent image
+                    tty true // Important for DinD to work properly
+                    privileged true // Required for DinD
+                    ports {
+                        port {
+                            containerPort 8080
+                        }
+                    }
+                    // Define the dind container as a sidecar
+                    sidecarContainers {
+                        container {
+                            image 'docker:dind'
+                            privileged true // Required for DinD
+                            // Expose the Docker socket of the Dind container
+                            ports {
+                                port {
+                                    containerPort 2375
+                                }
+                            }
+                            // Important: Set the DOCKER_HOST environment variable
+                            env {
+                                DOCKER_HOST "tcp://localhost:2375"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     stages {
         stage('Verify Docker') {
             steps {
-                script {
-                    // Ensure Docker is accessible
-                    sh 'docker --version'
-                }
+                sh 'docker version' // Should now connect to the inner daemon
             }
         }
         stage('Build') {
