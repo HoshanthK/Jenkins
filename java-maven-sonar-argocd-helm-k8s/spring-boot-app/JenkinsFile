@@ -1,8 +1,7 @@
 pipeline {
-    agent none  // This allows us to specify agents for individual stages
+    agent none
 
     environment {
-        // Add Docker's path to the PATH so Jenkins can find it
         PATH = "/usr/local/bin:$PATH"
     }
 
@@ -11,14 +10,16 @@ pipeline {
             agent {
                 docker {
                     image 'abhishekf5/maven-abhishek-docker-agent:v1'
-                    args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+                    args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
                 }
             }
             steps {
-                sh 'docker --version'  // Move the docker version command here
-                sh 'ls -ltr'
-                // build the project and create a JAR file
-                sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+                script {
+                    // This will run inside the Docker container
+                    sh 'docker --version'
+                    sh 'ls -ltr'
+                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+                }
             }
         }
 
