@@ -4,6 +4,7 @@ pipeline {
     environment {
         // Add Docker's path to the PATH so Jenkins can find it
         PATH = "/usr/local/bin:$PATH"
+        SHELL = "/bin/bash"
     }
 
     stages {
