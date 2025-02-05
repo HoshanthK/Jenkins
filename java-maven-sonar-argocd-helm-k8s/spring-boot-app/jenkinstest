@@ -1,10 +1,12 @@
 pipeline {
     agent any
+    
     stages {
-        stage('Build') {
+        stage('Test Docker') {
             steps {
                 script {
-                    sh 'docker inspect -f . abhishekf5/maven-abhishek-docker-agent:v1'
+                    sh 'docker --version'
+                    sh 'docker ps'
                 }
             }
         }
