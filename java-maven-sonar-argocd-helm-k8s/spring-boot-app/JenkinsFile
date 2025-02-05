@@ -6,16 +6,6 @@ pipeline {
         PATH = "/usr/local/bin:$PATH"
     }
 
-    stages {
-        stage('Checkout') {
-            agent any
-            steps {
-                sh 'echo passed'
-                // Uncomment and update if needed
-                // git branch: 'main', url: 'https://github.com/iam-veeramalla/Jenkins-ZeroToHero.git'
-            }
-        }
-
         stage('Build and Test') {
             agent {
                 docker {
