@@ -1,6 +1,10 @@
 pipeline {
     agent any
-    
+
+    environment {
+        PATH = "/usr/local/bin:$PATH"  // Add Docker path to Jenkins environment
+    }
+
     stages {
         stage('Test Docker') {
             steps {
