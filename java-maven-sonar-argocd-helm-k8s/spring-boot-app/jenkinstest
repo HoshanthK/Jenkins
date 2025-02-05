@@ -2,15 +2,32 @@ pipeline {
     agent any
 
     environment {
-        PATH = "/usr/local/bin:$PATH"  // Add Docker path to Jenkins environment
+        // Add Docker's path to the PATH so Jenkins can find it
+        PATH = "/usr/local/bin:$PATH"
     }
 
     stages {
+        stage('Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Test Docker') {
             steps {
                 script {
+                    // Verify Docker is available
                     sh 'docker --version'
-                    sh 'docker ps'
+                    sh 'docker ps'  // Check running Docker containers
+                }
+            }
+        }
+
+        stage('Pull Docker Image') {
+            steps {
+                script {
+                    // Pull the Docker image as a test
+                    sh 'docker pull abhishekf5/maven-abhishek-docker-agent:v1'
                 }
             }
         }
